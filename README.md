@@ -63,22 +63,22 @@ The latest versions are recommended for maximium User Agent compatibility.
 The latest ua-parser 'regexes.yaml' file can be downloaded from: [GitHub/uap-core][github-uap-core]
 
 To determine where your current ua-parser 'regexes.yaml' resides do the following:
-% python
-> % import ua_parser
-> % print ua_parser.__file__
->/Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/__init__.pyc
-> % exit()
+    % python
+    % import ua_parser
+    % print ua_parser.__file__
+    /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/__init__.pyc
+    % exit()
 
 We can then see where the regex files exist by looking in the folder that the library exist in:
-> % ls /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.*
-> /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json
-> /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml
+    % ls /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.*
+    /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json
+    /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml
 
 The existing regex files can be updated using the following example:
 
-> % cp /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml.bak
-> % cp /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json.bak
-> % cp regexes.yaml /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml
+    % cp /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml.bak
+    % cp /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json.bak
+    % cp regexes.yaml /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml
 
 * Note: The ua-parser library requires either regexes.yaml or regexes.json to exist. It will default to prefering the Yaml file, if the Yaml regex file is missing it will use the JSON regex file. Typically both of these files contain the same regexes.
 
