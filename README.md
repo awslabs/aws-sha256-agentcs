@@ -2,8 +2,14 @@
 
 The **AWS SHA256 Compatibility Scanner** helps users to identify if their applications or user base are affected by the SHA1 Deprecation taking place this year. It works by parsing the UserAgent string of the application and attempting to determine the application name, application version, os name, and os version. It then uses this information to check against a known list of applications and operating systems that are known either to support or not support SHA256 certificates. It outputs a single line per UserAgent, the output can be used to identify if a specific application is either '**supported**', '**not supported**', or if '**support is unknown**'.
 
-You can read about the [Amazon Web Services][aws] S3 SHA1 Deprecation here: [AWS S3 SHA1 Deprecation Detail][AWSSSHA1Deprecation]
+Amazon Web Services bulletins about the SHA1 Certificate Deprecation is available here:
+* [AWS to Switch to SHA256 Hash Algorithm for SSL Certificates][aws-switch-to-sha256]
+* [Update on AWS's Switch to SHA256 for SSL Certificates][aws-switch-to-sha256-update]
+* [AWS S3 SHA1 Deprecation Detail][AWSSSHA1Deprecation]
 
+You can find additional information about the SHA1 Deprecation here: [CA/Browser Forum][ca-browser-forum-post]
+
+## AWS-SHA256-AGENTCS Repository and Issues:
 * [Repository][AWSSHA256CS-Repository]
 * [Issues][AWSSHA256CS-Issues]
 
@@ -78,8 +84,8 @@ We can then see where the regex files exist by looking in the folder that the li
 
 The existing regex files can be updated using the following example:
 
-    % cp /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml.bak
-    % cp /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json.bak
+    % mv /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml.bak
+    % mv /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json.bak
     % cp regexes.yaml /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml
 
 * Note: The ua-parser library requires either regexes.yaml or regexes.json to exist. It will default to prefering the Yaml file, if the Yaml regex file is missing it will use the JSON regex file. Typically both of these files contain the same regexes.
@@ -100,3 +106,6 @@ The existing regex files can be updated using the following example:
 [github-uap-core]: http://github.com/ua-parser/uap-core
 [pypi-pyyaml]: http://pypi.python.org/pypi/PyYAML
 [pypi-hosted]: http://pyyaml.org/browser/pyyaml
+[aws-switch-to-sha256]: https://aws.amazon.com/security/security-bulletins/aws-to-switch-to-sha256-hash-algorithm-for-ssl-certificates/
+[aws-switch-to-sha256-update]: https://aws.amazon.com/security/security-bulletins/update-on-aws-switch-to-sha256-for-ssl-certificates/
+[ca-browser-forum-post]: https://cabforum.org/2014/10/16/ballot-118-sha-1-sunset/
