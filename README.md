@@ -9,7 +9,7 @@ Amazon Web Services bulletins about the SHA1 Certificate Deprecation is availabl
 
 You can find additional information about the SHA1 Deprecation here: [CA/Browser Forum][ca-browser-forum-post]
 
-## AWS-SHA256-AGENTCS Repository and Issues:
+## AWS-SHA256-AGENTCS Links:
 * [Repository][AWSSHA256CS-Repository]
 * [Issues][AWSSHA256CS-Issues]
 
