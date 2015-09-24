@@ -63,6 +63,7 @@ The latest versions are recommended for maximium User Agent compatibility.
 The latest ua-parser 'regexes.yaml' file can be downloaded from: [GitHub/uap-core][github-uap-core]
 
 To determine where your current ua-parser 'regexes.yaml' resides do the following:
+
     % python
     % import ua_parser
     % print ua_parser.__file__
@@ -70,6 +71,7 @@ To determine where your current ua-parser 'regexes.yaml' resides do the followin
     % exit()
 
 We can then see where the regex files exist by looking in the folder that the library exist in:
+
     % ls /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.*
     /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.json
     /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/regexes.yaml
