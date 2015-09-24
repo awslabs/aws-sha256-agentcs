@@ -1,0 +1,211 @@
+Background
+----------
+The SHA-1 is a cryptographic hash function which produces a 160-bit (20-byte) hash value known as a message digest.
+
+It has been known for some time that the SHA-1 cryptographic hash algorithm demonstrates weakness against collision attacks. A certificate with a strong cryptographic hash ensures that the contents have not been tampered with. However, with SHA-1, collision attacks could be used to generate additional certificates that have the same digital signature as an original.
+
+As the cost of compute declines, these attacks are becoming more affordable and therefore too insecure for public web PKI. As a result, the use of the signing algorithm SHA-1 is being deprecated in favor of the newer and more secure SHA-256 algorithm.  
+
+
+
+Forward
+=====================================================================
+This FAQ is intended to help you identify if your Application, Libraries, or OS are affected by SHA1 deprecation.
+
+
+
+What will happen if I can't update?
+=====================================================================
+If you are unable to update your application and/or operating system to be compatible with accepting SHA256 certificates, your application will not be able to connect to S3.
+
+
+
+How can I tell if my SDK is affected by the deprecation of SHA1?
+=====================================================================
+shaTest.zip contains tests that can be run for Java, Ruby, PHP, Javascript, and Python SDKs to determine if your SDK/Library/OS combination is supported.
+To test them, download this file: https://www.amazonsha256.com/shaTest.zip
+
+
+Java:
+        After downloading the zip file and extracting the Java script, execute it by running:
+        $ javac ShaTest.java
+        $ java ShaTest
+
+Ruby:
+        After downloading the zip file and extracting the Ruby script, execute it by running:
+        $ ruby shaTest.rb
+
+PHP:
+        After downloading the zip file and extracting the PHP script.
+        download the latest phar release: https://github.com/aws/aws-sdk-php/releases/download/2.8.1/aws.phar
+        and save it in the same directory as shaTest.php
+
+        Execute the PHP script by running:
+
+        $ php shaTest.php
+
+Javascript:
+        After downloading the zip file and extracting the script, execute it by running:
+        $ node shaTest.js
+
+Python:
+        After downloading the zip file and extracting the Python script, execute it by running:
+        $ python shaTest.py
+
+.NET:
+        .NET customers are not impacted by this issue.
+
+
+
+JAVA APPLICATIONS
+How can I tell if I am affected?
+What can I do to mitigate SHA1 deprecation?
+=====================================================================
+Affected: Java applications
+
+You only need to verify you are using Java v1.6.0u19 or later.
+
+This update will include support for SHA1 certificates and will contain the required CA certificates in the CA store.
+
+
+
+OPENSSL OR GNUTLS APPLICATIONS
+How can I tell if I am affected?
+What can I do to mitigate SHA1 deprecation?
+=====================================================================
+Affected: OpenSSL or GnuTLS based applications, Linux based applications, cross platform applications not based on Java.
+
+If OpenSSL, You need to verify you are using OpenSSL v0.9.8, v0.9.8o, or higher.
+
+If GnuTLS, you need to verify you are using GnuTLS v1.7.4 or higher.
+
+You need to verify the correct root certificates are available in the system's Certificate Authority (CA) store.
+
+
+
+APPLICATIONS NOT USING JAVA, OPENSSL, OR GNUTLS
+How can I tell if I am affected?
+What can I do to mitigate SHA1 deprecation?
+=====================================================================
+Affected: Applications not using Java, .NET, or OpenSSL.
+          Such as iOS apps running on an iOS earlier than v3.0 or 
+          Android apps running on Android earlier than v2.3, or
+          Windows applications using 'StreamSocket' with SSL, 'WinHTTP' with SSL, or 'SChannel or SSPI' APIs
+
+        You need to verify support is provided by the Operating System, Libraries.
+        You need to verify the correct root certificates are available in the system's Certificate Authority (CA) store.
+
+
+
+How can I tell if my SSL library is supported?
+=====================================================================
+The following SSL Libraries support SHA256 certificates.
+
+Java: 1.6.0_u19+
+Mozilla NSS: 3.8+
+OpenSSL: 0.9.8 / 0.9.8o+
+GnuTLS: 1.7.4+
+.NET FX: 1.4+
+
+If you are using an older version of one of the above libraries, please upgrade to latest version if possible.
+
+If you are using Java 1.6.0_u19 or newer then your application is SHA256 compatible, you do not need to verify any other libraries or operating systems.
+
+If you are unable to upgrade the system OpenSSL or GnuTLS library, then you can alternatively statically compile them into your application.
+
+
+
+How can I tell if my browser is supported?
+=====================================================================
+The following browsers support SHA256 certificates.
+
+Chrome: 1.0+ (38+)
+
+Firefox: 1.0+
+
+Internet Explorer: 6+
+
+Konqueror: 3.5.6+
+
+Mozilla: 1.4+
+
+Netscape: 7.1+
+
+Opera: 6.0+
+
+Safari: 3+
+
+You can verify your browser supports SHA256 by visiting this url: https://www.amazonsha256.com/
+If your browser was able to successfully connect you will see a success message on the web page.
+
+If your browser is not listed above then please upgrade to latest version if possible.
+
+For users of 'Chrome' and 'Internet Explorer', your browser must also be running on a SHA256 compatible OS, you can check your operating system version in the next section.
+
+For 'Windows Internet Explorer' and 'MacOS or iOS Safari users'. If you are using the latest version of the browser and running on a non-supported operating system, you may be able to switch to a different browser that is supported by SHA256 such as FireFox.
+
+If you are running the latest version of one of the above browsers then your certificate bundle for the browser should include the required certificates. Internet Explorer's certificate bundle is managed by the Windows OS so you will need the latest Windows OS updates installed.
+
+If you are unable to upgrade or switch browsers then you will need to upgrade your operating system.
+
+
+
+How can I tell if my Operating System is supported?
+=====================================================================
+The following operating systems support SHA256 certificates.
+
+Apple OS X: 10.5+
+
+Apple iOS: 3.0+
+
+Android/FireOS: 2.3+
+
+Blackberry: 5.0+
+
+ChromeOS: All are supported
+
+Windows: XP (SP 3)
+
+Windows	Phone: 7+
+
+Windows	Server: 2003 SP2 +MS13-095
+
+If your operating system is not supported and can not be upgraded, you maybe able to convert your application to use a non-system SSL library such as OpenSSL or GnuTLS.
+
+If your application is not an Android application then you can alternatively convert your application to use the latest version of OpenSSL instead of the system SSL library.
+
+If your application is an Android application you can convert it to use 'SpongyCastle' a derivative of 'BouncyCastle' instead of using the Android SSL library.
+
+*Note: You will still need to verify that the operating system includes the required certificates in the system's Certificate Authority (CA) store.
+
+
+
+How can I tell if my Library is supported?
+=====================================================================
+If you are using an SDK, then the SDKs often depend upon OS calls to OpenSSL.  Depending upon the library that you are using, you can test this by determining which version of OpenSSL that you are using.   
+
+NodeJS
+
+> node -pe process.versions
+{ http_parser: '2.3',
+  node: '0.12.7',
+  v8: '3.28.71.19',
+  uv: '1.6.1',
+  zlib: '1.2.8',
+  modules: '14',
+  openssl: '1.0.1p' }
+
+PHP
+
+> php -r 'echo OPENSSL_VERSION_TEXT . "\n";'
+OpenSSL 1.0.2d 9 Jul 2015
+
+Python
+
+> python -c "import ssl;print ssl.OPENSSL_VERSION;"
+OpenSSL 1.0.2d 9 Jul 2015
+
+Ruby
+
+> ruby -ropenssl -e 'puts OpenSSL::OPENSSL_VERSION'
+OpenSSL 1.0.2d 9 Jul 2015
