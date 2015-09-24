@@ -12,10 +12,10 @@ You can read about the [Amazon Web Services][aws] S3 SHA1 Deprecation here: [AWS
 Before you begin, you may need an AWS account. Please see the [AWS Account and Credentials][aws-signup-instructions] section of the developer guide for information about how to create an AWS account and retrieve your AWS credentials.
 
 #### Minimum requirements ####
-**Python 2.7+**
-**pyyaml**
-**ua-parser**
-**user-agents**
+* **Python 2.7+**
+* **pyyaml**
+* **ua-parser**
+* **user-agents**
 
 #### Installation of required packages ####
 **user-agents** is hosted on [PyPI/user-agents][pypi-user-agents] and [GitHub/user-agents][github-user-agents]
