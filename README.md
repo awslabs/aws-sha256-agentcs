@@ -44,16 +44,39 @@ Alternatively, you can also get the latest source code from each project's `Gith
 This repository includes:
 
 3 Example Applications
+
 * uascan_app1.py: Takes either a single User Agent on the command line, or one or more entries from an STDIN Pipe
+
 * uascan_app2.py: Takes a command line argument specifying a file that contains one or more User Agents entries
+
 * uascan_app3.py: Takes a command line argument specifying an S3 Access Log file, that contains one or more entries
 
 Each of the applications will output help on how to run them if executed with no arguments.
 
 1 User Agent Scanning Library
+
 * uascan_lib.py : This is the library that does the majority of processing to determine if a User Agent supports SHA256
 
 Examples on how to use and call this library directly can be found in the above listed applications.
+
+#### Example Usages and Output####
+#####uascan_app1.py
+
+    % ./uascan_app1.py 'Mozilla/5.0 (Windows NT 6.3) Firefox/36.0'
+    0 Firefox
+
+    % echo -n 'Mozilla/5.0 (Windows NT 6.3) Firefox/36.0' | uascan_app1.py
+    0 Firefox
+
+#####uascan_app2.py
+
+    % ./uascan_app2.py useragents.txt
+    0 Firefox
+
+#####uascan_app3.py
+
+    % ./uascan_app3.py s3access.log
+    mybucket 192.168.1.125 0 Firefox
 
 ## Features
 
@@ -71,10 +94,10 @@ The latest ua-parser 'regexes.yaml' file can be downloaded from: [GitHub/uap-cor
 To determine where your current ua-parser 'regexes.yaml' resides do the following:
 
     % python
-    % import ua_parser
-    % print ua_parser.__file__
+    > import ua_parser
+    > print ua_parser.__file__
     /Users/myuser/Library/Python/2.7/lib/python/site-packages/ua_parser/__init__.pyc
-    % exit()
+    > exit()
 
 We can then see where the regex files exist by looking in the folder that the library exist in:
 

@@ -26,8 +26,8 @@ if __name__ == '__main__':
     s3log_regex = re.compile(r'^(.*?) (.*?) \[(.*?)\] (.*?) (.*?) (.*?) (.*?) (.*?) "(.*?)" (.*?) (.*?) (.*?) (.*?) (.*?) (.*?) "(.*?)" "(.*?)" (.*)$')
 
     # S3 Server Log Access Format: http://docs.aws.amazon.com/AmazonS3/latest/dev/LogFormat.html
-    #     1: Canonical user ID of bucket owner
-    #     2: Bucket Processed (or object copied too)
+    #     0: Canonical user ID of bucket owner
+    #     1: Bucket Processed (or object copied too)
     #     2: Date/Time %d/%b/%Y:%H:%M:%S %z
     #     3: Remote IP
     #     4: Canonical user ID of requester, or "Anonymous"
@@ -52,10 +52,20 @@ if __name__ == '__main__':
                              'that will read an S3 access log file. It will extract the\n'
                              'User Agent string from each line and process them for compatibility.\n\n'
                              'This application requires input of:\n'
-                             '    1) a S3 access log file, which is specified on the command line.\n'
-                             '\n')
-            sys.stderr.write('    Example: {0} {1}\n\n'.format(sys.argv[0], 's3_access.log'))
-            sys.stderr.write('Note: Blank lines are considered invalid and will be skipped.\n\n')
+                             '    1) a S3 access log file, which is specified on the command line.\n\n'
+                             '    Example: {0} {1}\n\n'
+                             'Note: Blank lines are considered to be valid user agents. If this is\n'
+                             '      not desired please remove any blank lines prior to processing\n\n'
+                             'The output of this application is in the following format:\n'
+                             '    Bucket SourceIP Supported UA_ShortName\n'
+                             '    mybucket 192.168.1.125 0 Chrome\n\n'
+                             '"Bucket" is the destination bucket.\n'
+                             '"SourceIP" is the IP address if the requester.\n'
+                             '"UA_ShortName" is a short descriptor of the full user agent.\n'
+                             '"Supported" indicates SHA256 Support:\n'
+                             '        0 = Supported\n'
+                             '        1 = Unknown Support (Maybe supported or not)\n'
+                             '        2 = Not Supported\n\n'.format(sys.argv[0], 's3_access.log'))
             exit(1)
 
         ua_file = ' '.join(sys.argv[1:])
@@ -87,13 +97,18 @@ if __name__ == '__main__':
             if line_regexed is not None:
                 # Extract the groups captured by the regex
                 line_regex_group = s3log_regex.match(line_in).groups()
-                log_bucket = line_regex_group[2]
+                log_bucket = line_regex_group[1]
                 log_ip = line_regex_group[3]
                 log_ua = line_regex_group[16]
 
                 app_logger.debug('DEBUG UA String: {0}'.format(log_ua))
-                sys.stdout.write('{0}\n'.format(ua_scanner.uacheck_string(log_ua)))
+                sys.stdout.write('{0} {1} {2}\n'.format(log_bucket, log_ip, ua_scanner.uacheck_string(log_ua)))
         log_filein.close()
+    except IOError:
+        # This is needed to avoid a stacktrace should someone cut out stdout while we're working, like...
+        # cat ua_agents.txt | uascan_lib.py | head -n 2
+        # We do not consider this type of usage an error so we will not treat it as one.
+        exit(0)
     except KeyboardInterrupt:
         # In case someone wants to CTRL+C, no need to print the stacktrace, just stop.
         # We will not consider a user's CTRL+C an error.

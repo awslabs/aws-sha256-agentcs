@@ -29,11 +29,18 @@ if __name__ == '__main__':
                              'that will read a list of single line User Agent strings from a\n'
                              'file and process them for compatibility.\n\n'
                              'This application requires input of a UserAgent from:\n'
-                             '    1) A file, which is specified on the command line.\n'
-                             '\n')
-            sys.stderr.write('    Example: {0} {1}\n\n'.format(sys.argv[0], 'uafile.txt'))
-            sys.stderr.write('Note: Blank lines are considered to be valid user agents. If this is\n'
-                             '      not desired please remove any blank lines prior to processing.\n\n')
+                             '    1) A file, which is specified on the command line.\n\n'
+                             '    Example: {0} {1}\n\n'
+                             'Note: Blank lines are considered to be valid user agents. If this is\n'
+                             '      not desired please remove any blank lines prior to processing.\n\n'
+                             'The output of this application is in the following format:\n'
+                             '    Supported UA_ShortName\n'
+                             '    0 Chrome\n\n'
+                             '"UA_ShortName" is a short descriptor of the full user agent.\n'
+                             '"Supported" indicates SHA256 Support:\n'
+                             '        0 = Supported\n'
+                             '        1 = Unknown Support (Maybe supported or not)\n'
+                             '        2 = Not Supported\n\n'.format(sys.argv[0], 'uafile.txt'))
             exit(1)
 
         ua_file = ' '.join(sys.argv[1:])
@@ -65,6 +72,11 @@ if __name__ == '__main__':
             app_logger.debug('DEBUG UA String: {0}'.format(line_string))
             sys.stdout.write('{0}\n'.format(ua_scanner.uacheck_string(line_string)))
         log_filein.close()
+    except IOError:
+        # This is needed to avoid a stacktrace should someone cut out stdout while we're working, like...
+        # cat ua_agents.txt | uascan_lib.py | head -n 2
+        # We do not consider this type of usage an error so we will not treat it as one.
+        exit(0)
     except KeyboardInterrupt:
         # In case someone wants to CTRL+C, no need to print the stacktrace, just stop.
         # We will not consider a user's CTRL+C an error.

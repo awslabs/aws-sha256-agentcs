@@ -31,13 +31,6 @@ import user_agents
 Valid Input: Any free form UserAgent string
 Valid Output: 0 - Supported, 1 - Support Unknown, 2 - Not Supported
 
-cat useragents.txt | ./uascan_lib.py
-cat sha256-ssl-agents.20150723.uniq.pdx | ./uascan_lib.py > uatest5.out
-cat uatest5.out | grep -v "DEBUG" | awk '{print $1" "$2}' | sort | uniq -c | sort -nr > browsers_supported5.txt
-cat uatest5.out | grep -v "DEBUG" | awk '{print $1}' | sort | uniq -c | sort -n > browsers_total_supported5.txt
-cat uatest5.out | grep 'DEBUG BROWSER:' | sed 's/    DEBUG BROWSER: //g' | sort | uniq -c | sort -nr > support_browser5.txt
-cat uatest5.out | grep 'DEBUG OS:' | sed 's/    DEBUG OS: //g' | sort | uniq -c | sort -nr > support_os5.txt
-cat uatest5.out | grep 'DEBUG BOTH:' | sed 's/    DEBUG BOTH: //g' | sort | uniq -c | sort -nr > support_both5.txt
 """
 
 
@@ -72,7 +65,8 @@ class UAscanner(object):
         self.useragents_support_supported = [
             'aws-internal', 'S3_Console', 'Amazon_CloudFront', 'Akamai_Edge', 'Google_ImageBot',
             'Google_ADsBot', 'CloudFlare_AlwaysOnline', 'Facebook_Platform', 'image_coccoc',
-            'MSNBot_Media', 'Exabot', 'Slackbot', 'Slack_ImgProxy', 'Slackbot_LinkExpanding']
+            'MSNBot_Media', 'Exabot', 'Slackbot', 'Slack_ImgProxy', 'Slackbot_LinkExpanding',
+            'ElasticBeanstalk']
 
         # These bots are identified by user-agents library.
         # Move these to regex FIXME
@@ -258,6 +252,11 @@ class UAscanner(object):
         ua_regex_list.append({
             'name': 'S3_Console',
             'regex': re.compile(r'^.*(S3Console)\/(.*).*$'),
+            'format': {'application': 0, 'version': 1}
+        })
+        ua_regex_list.append({
+            'name': 'ElasticBeanstalk',
+            'regex': re.compile(r'^(ElasticBeanstalk)-.*$'),
             'format': {'application': 0, 'version': 1}
         })
         ua_regex_list.append({
@@ -947,98 +946,3 @@ class UAscanner(object):
         else:
             # Something went wrong, we should have a minimum of 2 arguments.
             return None, None
-
-
-def get_cmdline():
-    if len(sys.argv) > 1:
-        # This will join the arguments if it was not provided as a single argument
-        ua_string = ' '.join(sys.argv[1:])
-        return ua_string
-    else:
-        return None
-
-
-def get_stdin():
-    # Let's get input from Pipe, if no input for 1 second, we exit.
-    timeout_seconds = 1
-    end_time = int(round(time.time() + timeout_seconds))
-    while True:
-        line = sys.stdin.read()
-        if line != '':
-            lines = line.replace('\r', '\n').replace('\n\n', '\n').split('\n')
-            return lines
-        else:
-            if int(round(time.time())) >= end_time:
-                return None
-    return None
-
-
-if __name__ == '__main__':
-
-    try:
-        debug_enabled = False
-        identify_unknown = False
-        # Initialize UserAgent Scanner class
-        ua_scanner = UAscanner(debug=debug_enabled, identify_unknown=identify_unknown)
-
-        # We'll setup this applications logging separate from the above class.
-        app_logger = logging.getLogger('UAScannerApp')
-        app_logger.setLevel(logging.DEBUG)
-        app_logger.addHandler(logging.NullHandler())
-        app_logger_stream = logging.StreamHandler()
-        app_logger_stream.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
-        if debug_enabled:
-            app_logger_stream.setLevel(logging.DEBUG)
-        else:
-            app_logger_stream.setLevel(logging.ERROR)
-        app_logger.addHandler(app_logger_stream)
-
-        app_logger.debug('Processing command line')
-        cmdline = get_cmdline()
-        if cmdline is False:
-            print 1
-            exit(0)
-        if cmdline is not None:
-            app_logger.debug('Command line input detected')
-            # If the user provided us commandline input, we will only test that.
-            sys.stdout.write('{0}\n'.format(ua_scanner.uacheck_string(cmdline)))
-            exit(0)
-        else:
-            if os.isatty(0):
-                app_logger.debug('TTY detected on STDIN, we do not support user typed input. Printing help.')
-
-                # We have a TTY, the user would need to hand key input. This will not work.
-                sys.stderr.write('UserAgent SHA256 Compatibility Scanner\n'
-                                 '======================================\n'
-                                 'This application requires input of a UserAgent either:\n'
-                                 '    1) On the Commandline\n'
-                                 '    2) From a Pipe\n'
-                                 '\n')
-                sys.stderr.write('Example 1:\n    {0} {1}\n\n'.format(
-                    sys.argv[0], "'Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0'"))
-                sys.stderr.write('Example 2:\n    echo -n {1} | {0}\n\n'.format(
-                    sys.argv[0], "'Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0'"))
-                sys.stderr.write('Example 3:\n    cat useragents.txt | {0}\n\n'.format(sys.argv[0]))
-                sys.stderr.write('\n\n'
-                                 'Note: Blank lines are considered to be valid user agents. If this is not\n'
-                                 '      desired please remove any blank lines prior to processing')
-                exit(0)
-            else:
-                # We have a pipe, read the input and process each individually.
-                # If the pipe has no data input for 1 second, we exit.
-                while True:
-                    ua_lines = get_stdin()
-                    if ua_lines is None:
-                        exit(0)
-                    else:
-                        for ua in ua_lines:
-                            sys.stdout.write('{0}\n'.format(ua_scanner.uacheck_string(ua)))
-    except IOError:
-        # This is needed to avoid a stacktrace should someone cut out stdout while we're working, like...
-        # cat ua_agents.txt | uascan_lib.py | head -n 2
-        # We do not consider this type of usage an error so we will not treat it as one.
-        exit(0)
-    except KeyboardInterrupt:
-        # In case someone wants to CTRL+C, no need to print the stacktrace, just stop.
-        # We will not consider a user's CTRL+C an error.
-        exit(0)

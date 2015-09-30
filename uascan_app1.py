@@ -97,15 +97,21 @@ if __name__ == '__main__':
                                  'strings from STDIN.\n\n'
                                  'This application requires input of a UserAgent either:\n'
                                  '    1) On the Commandline\n'
-                                 '    2) From a Pipe\n'
-                                 '\n')
-                sys.stderr.write('Example 1:\n    {0} {1}\n\n'.format(
-                    sys.argv[0], "'Mozilla/5.0 (Windows NT 6.3) Firefox/36.0'"))
-                sys.stderr.write('Example 2:\n    echo -n {1} | {0}\n\n'.format(
-                    sys.argv[0], "'Mozilla/5.0 (Windows NT 6.3) Firefox/36.0'"))
-                sys.stderr.write('Example 3:\n    cat useragents.txt | {0}\n\n'.format(sys.argv[0]))
-                sys.stderr.write('Note: Blank lines are considered to be valid user agents. If this is\n'
-                                 '      not desired please remove any blank lines prior to processing\n\n')
+                                 '    2) From a Pipe\n\n'
+                                 'Example 1:\n    {0} {1}\n\n'
+                                 'Example 2:\n    echo -n {1} | {0}\n\n'
+                                 'Example 3:\n    cat useragents.txt | {0}\n\n'
+                                 'Note: Blank lines are considered to be valid user agents. If this is\n'
+                                 '      not desired please remove any blank lines prior to processing\n\n'
+                                 'The output of this application is in the following format:\n'
+                                 '    Supported UA_ShortName\n'
+                                 '    0 Chrome\n\n'
+                                 '"UA_ShortName" is a short descriptor of the full user agent.\n'
+                                 '"Supported" indicates SHA256 Support:\n'
+                                 '        0 = Supported\n'
+                                 '        1 = Unknown Support (Maybe supported or not)\n'
+                                 '        2 = Not Supported\n\n'.format(
+                                     sys.argv[0], "'Mozilla/5.0 (Windows NT 6.3) Firefox/36.0'"))
                 exit(0)
             else:
                 # We have a pipe, read the input and process each individually.
