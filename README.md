@@ -113,6 +113,57 @@ The existing regex files can be updated using the following example:
 
 * Note: The ua-parser library requires either regexes.yaml or regexes.json to exist. It will default to prefering the Yaml file, if the Yaml regex file is missing it will use the JSON regex file. Typically both of these files contain the same regexes.
 
+## Known Issues
+
+* PHP, Python, Ruby, and other languages SHA256 certificate compatibility are reported as 'Unknown'. By proxy libraries such as Boto are also reported as having 'Unknown' SHA256 certificate Support. Linux applications like Curl are also reported as 'Unknown'.
+
+    For Linux applications, the version of OpenSSL used is not tied directly to the version or distribution of
+    the operating system. This makes identifying the version of OpenSSL that an application may be using
+    impossible without that information being provided by the client, which very often does not happen for
+    security reasons.
+
+    Unlike Linux, other operating system's SSL support is often tied to the version of the operating system running.
+
+    For example, a person could be running the latest version of a linux distribution, with the latest
+    most up to date version of an application, that is linked against a very old version of OpenSSL, and that
+    application would not support SHA256 certificates.
+
+    Similarly you could be running a distribution of that has been untouched for over 5 years, with an
+    application equally out of date, but linked against the latest version of OpenSSL, and that application
+    would support SHA256 certificates.
+
+    For applications reported as having 'Unknown' SHA256 compatibility. We recommend doing a closer investigation
+    of the application or operating system when possible. The versions of OpenSSL utilized by languages
+    like Python, Ruby, and Perl can be identified with a quick query.
+
+## How to identify what version of OpenSSL my interpreted language is using?
+
+####NodeJS
+
+    % node -pe process.versions
+    { http_parser: '2.3',
+    node: '0.12.7',
+    v8: '3.28.71.19',
+    uv: '1.6.1',
+    zlib: '1.2.8',
+    modules: '14',
+    openssl: '1.0.1p' }
+
+####PHP
+
+    % php -r 'echo OPENSSL_VERSION_TEXT . "\n";'
+    OpenSSL 1.0.2d 9 Jul 2015
+
+####Python
+
+    % python -c "import ssl;print ssl.OPENSSL_VERSION;"
+    OpenSSL 1.0.2d 9 Jul 2015
+
+####Ruby
+
+    % ruby -ropenssl -e 'puts OpenSSL::OPENSSL_VERSION'
+    OpenSSL 1.0.2d 9 Jul 2015
+
 ## Supported Versions
 
 1.0.0  - Initial Release
