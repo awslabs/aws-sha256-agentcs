@@ -115,7 +115,7 @@ The existing regex files can be updated using the following example:
 
 ## Known Issues
 
-* PHP, Python, Ruby, and other languages SHA256 certificate compatibility are reported as 'Unknown'. By proxy libraries such as Boto are also reported as having 'Unknown' SHA256 certificate Support. Linux applications like Curl are also reported as 'Unknown'.
+* **PHP, Python, Ruby, and other languages SHA256 certificate compatibility are reported as 'Unknown'. By proxy libraries such as Boto are also reported as having 'Unknown' SHA256 certificate Support. Linux applications like Curl are also reported as 'Unknown'.**
 
     For Linux applications, the version of OpenSSL used is not tied directly to the version or distribution of
     the operating system. This makes identifying the version of OpenSSL that an application may be using
@@ -134,7 +134,24 @@ The existing regex files can be updated using the following example:
 
     For applications reported as having 'Unknown' SHA256 compatibility. We recommend doing a closer investigation
     of the application or operating system when possible. The versions of OpenSSL utilized by languages
-    like Python, Ruby, and Perl can be identified with a quick query.
+    like Python, Ruby, and PHP can be identified with a quick query.
+
+* **I've installed the perquisites and Python reports the libraries needed are not installed.**
+
+    It is likely that two versions of Python are installed on this system. Each copy of Python can have it's
+    own version of PIP which is tied to a specific library installation location.
+
+    You can work around this issue by installing the libraries into your user's local folder. First uninstall
+    the installed libraries from the system folder, then reinstall them locally into the user's home folder.
+
+Example:
+
+    # First remove the installed libraries from the system folder.
+    % pip remove pyyaml ua-parser user-agents
+
+    # Install the required libraries into the user's local python library folder.
+    % pip install --user pyyaml ua-parser user-agents
+
 
 ## How to identify what version of OpenSSL my interpreted language is using?
 
