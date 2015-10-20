@@ -808,6 +808,9 @@ class UAscanner(object):
         # We do not know about these, they will be created as Unknown.
         # This is only to maintain this list. We are not explicitly using it.
         # browsers_unknown = ['Lunascape', 'Lynx']
+
+        # We'll start with application that are independent of the OS for support, or where
+        # the version of the application depends on a specific version of the OS.
         if browser_name in self.browser_depends_on_os:
             # Depends on OS
             supported_browser = supported_os
@@ -815,23 +818,11 @@ class UAscanner(object):
         elif browser_name in self.useragents_support_supported_bots:
             # We'll assume various major Web Bots will be supported.
             supported = supported_browser = self.ua_support_true
-        elif browser_name == 'Android':
-            supported_browser = self.test_version(os_ver, '2.3')
-
-        elif browser_name == 'Outlook':
-            supported_browser = self.test_version(os_ver, '2003')
 
         elif browser_name == 'SeaMonkey':
             # Seamonkey uses Mozilla NSS for SSL. Seamonkey's first version was in 2006.
             # NSS 3.8+ is SHA256 Certificate Compatible was released in 2003.
             supported = supported_browser = self.ua_support_true
-
-        elif browser_name == 'Opera':
-            supported_browser = self.test_version(browser_ver, '6')
-
-        elif browser_name == 'Konqueror':
-            # 3.5.6 or higher supports SHA256, relies on OpenSSL
-            supported_browser = self.test_version(browser_ver, '3.5.6')
 
         elif browser_name == 'Netscape':
             # 7.1 or higher supports SHA256, relies on NSS
@@ -844,9 +835,6 @@ class UAscanner(object):
         elif browser_name == 'CFNetwork':
             # This is used by Apps running on an and using Apple OS's built in Web calls
             supported = supported_browser = supported_os
-
-        elif browser_name == 'Safari' or browser_name == 'Mobile Safari':
-            supported_browser = self.test_version(browser_ver, '3')
 
         elif browser_name in self.firefox_browsers:
             # Firefox and Mozilla use Mozilla NSS for SSL, Firefox 1.0+ uses NSS 3.8+
@@ -874,37 +862,57 @@ class UAscanner(object):
                     supported_browser = self.ua_support_true
                 if browser_ver in blackberry_support_false:
                     supported_browser = self.ua_support_false
+                supported = self.is_supported(supported_os, supported_browser)
 
-        elif browser_name == 'IE' or browser_name == 'IE Mobile':
-            supported_browser = self.test_version(browser_ver, '6')
-
-        elif browser_name in self.chrome_browsers:
-            # Chrome 0-37 depends on OS, 38+ is independent of OS
-            supported_browser = self.test_version(browser_ver, '38')
-            if supported_browser == self.ua_support_false:
-                supported_browser = self.ua_support_unknown
-
-            if supported_browser == self.ua_support_unknown and supported_os == self.ua_support_true:
-                supported = self.ua_support_true
-            elif supported_browser == self.ua_support_unknown and supported_os == self.ua_support_unknown:
-                supported = self.ua_support_unknown
-            elif supported_browser == self.ua_support_true:
-                supported = self.ua_support_true
-            else:
-                supported = self.ua_support_false
-
-        # Anything that has unknown support will be '1'
-        elif browser_name not in self.browsers_nonstandard and browser_name != 'Other':
-            # Unless handled in an Application's check above, at this point we will assume
-            # that the application may depend on the OS for support.
-            #
-            # We'll deal with Chrome/OS in it's section above, as it is previously reliant
-            # on the OS, but the newer versions are not.
-            agent_browser_identified = False
-            supported = self.is_supported(supported_os, supported_browser)
         else:
-            # This browser agent was unidentified we will assume it uses OS support.
-            agent_browser_identified = False
+            # Here's we'll process browsers that have a dependency on OS support for their support.
+            if browser_name == 'Android':
+                supported_browser = self.test_version(os_ver, '2.3')
+
+            elif browser_name == 'Outlook':
+                supported_browser = self.test_version(os_ver, '2003')
+
+            elif browser_name == 'Opera':
+                supported_browser = self.test_version(browser_ver, '6')
+
+            elif browser_name == 'Konqueror':
+                # 3.5.6 or higher supports SHA256, relies on OpenSSL
+                supported_browser = self.test_version(browser_ver, '3.5.6')
+
+            elif browser_name == 'Safari' or browser_name == 'Mobile Safari':
+                supported_browser = self.test_version(browser_ver, '3')
+
+            elif browser_name == 'IE' or browser_name == 'IE Mobile':
+                supported_browser = self.test_version(browser_ver, '6')
+
+            elif browser_name in self.chrome_browsers:
+                # Chrome 0-37 depends on OS, 38+ is independent of OS
+                supported_browser = self.test_version(browser_ver, '38')
+                if supported_browser == self.ua_support_false:
+                    supported_browser = self.ua_support_unknown
+
+                if supported_browser == self.ua_support_unknown and supported_os == self.ua_support_true:
+                    supported = self.ua_support_true
+                elif supported_browser == self.ua_support_unknown and supported_os == self.ua_support_unknown:
+                    supported = self.ua_support_unknown
+                elif supported_browser == self.ua_support_true:
+                    supported = self.ua_support_true
+                else:
+                    supported = self.ua_support_false
+
+            # Anything that has unknown support will be '1'
+            elif browser_name not in self.browsers_nonstandard and browser_name != 'Other':
+                # Unless handled in an Application's check above, at this point we will assume
+                # that the application may depend on the OS for support.
+                #
+                # We'll deal with Chrome/OS in it's section above, as it is previously reliant
+                # on the OS, but the newer versions are not.
+                agent_browser_identified = False
+            else:
+                # This browser agent was unidentified we will assume it uses OS support.
+                agent_browser_identified = False
+
+            # Finally we'll see if the application coupled with the OS are supported as a package
             supported = self.is_supported(supported_os, supported_browser)
 
         self.logger.debug('ALL: {0}/{1}/{2} {3}/{4} {5}/{6} [{7}]'.format(
